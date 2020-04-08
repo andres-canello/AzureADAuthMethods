@@ -30,7 +30,11 @@ urn:ietf:wg:oauth:2.0:oob
 1.	Open PowerShell and navigate to the folder where you saved the AzureADAuthenticationMethods.psm1 file.
 2.  Run Import-Module .\AzureADAuthenticationMethods.psm1 and authenticate with a user with appropiate permissions
 Available commands:
+
 Get-AzureADUserAuthenticationMethod
+
 New-AzureADUserAuthenticationMethod
+
 Set-AzureADUserAuthenticationMethod
+
 Remove-AzureADUserAuthenticationMethod
