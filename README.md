@@ -1,4 +1,4 @@
-# Authentication Methods API
+# Authentication Methods API PS Module
 
 This PowerShell module simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. 
 To use this module, please take the following steps.
@@ -29,6 +29,8 @@ urn:ietf:wg:oauth:2.0:oob
 
 1.	Open PowerShell and navigate to the folder where you saved the AzureADAuthenticationMethods.psm1 file.
 2.  Run Import-Module .\AzureADAuthenticationMethods.psm1 and authenticate with a user with appropiate permissions
+
+
 Available commands:
 
 Get-AzureADUserAuthenticationMethod
