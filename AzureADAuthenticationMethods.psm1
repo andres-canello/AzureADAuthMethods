@@ -48,7 +48,7 @@
 # Update this info
 $tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
 $clientId = 'c79c106a-bdf0-475c-a6e0-219533b9a017'  # REQUIRED -> Change to your AppID
-#$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
+#$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # NOT SUPPORTED YET | OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
 # =====================================================================================================================================
 
