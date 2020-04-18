@@ -5,7 +5,7 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	
+	Version 0.7 - 18 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
@@ -45,10 +45,10 @@
 
 
 
-# Update this
-$tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change your tenant domain
-$clientId = 'c79c106a-bbf0-415c-a6e0-2195c449a017'  # REQUIRED -> Change to your AppID
-#$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # OPTIONAL -> Set and uncomment only if using App Permissions and a certificate to authenticate
+# Update this info
+$tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
+$clientId = 'c79c106a-bdf0-475c-a6e0-219533b9a017'  # REQUIRED -> Change to your AppID
+#$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
 # =====================================================================================================================================
 
@@ -56,33 +56,53 @@ $baseURI = 'https://graph.microsoft.com/beta/users/'
 $authMethodUri = "$baseUri{0}/authentication/{1}Methods"
 
 
-$MSAL = Get-Module -ListAvailable MSAL.ps -Verbose:$false -ErrorAction SilentlyContinue
-if ($MSAL) {
-			
-        # If App Permissions, try to get the cert from the cert store
-        if ($certThumbprint){
 
-            $clientCertificate = Get-Item Cert:\CurrentUser\My\$certThumbprint -ErrorAction SilentlyContinue
+function New-Auth{
 
-	        if ($clientCertificate){
-                Write-Host "Certificate selected: " $clientCertificate.Subject
-                $authResult = Get-MsalToken -ClientCertificate $ClientCertificate -ClientId $clientId -TenantId $tenantDomain
-            }else{
-		        Write-Host "Couldn't find a certificate in the local certificate store that matches the configured thumbprint ($certThumbprint)" -ForegroundColor Red
-				throw
-		        }
-        }else{
-				$authResult = Get-MsalToken -TenantId $tenantDomain -ClientId $clientId -RedirectUri 'urn:ietf:wg:oauth:2.0:oob' -Interactive
+	Param($aR)
+	
+	# If App Permissions, try to get the cert from the cert store
+	if ($certThumbprint){
+
+		$clientCertificate = Get-Item Cert:\CurrentUser\My\$certThumbprint -ErrorAction SilentlyContinue
+
+		if ($clientCertificate){
+			Write-Host "Certificate selected: " $clientCertificate.Subject
+			$aR = Get-MsalToken -ClientCertificate $ClientCertificate -ClientId $clientId -TenantId $tenantDomain
+		}else{
+			Write-Host "Couldn't find a certificate in the local certificate store that matches the configured thumbprint ($certThumbprint)" -ForegroundColor Red
+			throw
 			}
-     
-$authHeaders = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
-$authHeaders.Add('Authorization', 'Bearer ' + $authResult.AccessToken)
-$authHeaders.Add('Content-Type','application/json')
-$authHeaders.Add('Accept','application/json, text/plain')
-}  else {
-	Write-Host "Please install the MSAL.ps PowerShell module (Install-Module MSAL.ps) and try again" -ForegroundColor Red
-	throw
-	}
+	}else{
+			# if we've done interactive auth, try silently getting a new token
+			if ($aR){
+				
+				$user = $aR.Account.Username
+				$aR = $null
+				$aR = Get-MsalToken -TenantId $tenantDomain -ClientId $clientId -RedirectUri 'urn:ietf:wg:oauth:2.0:oob' -LoginHint $user -Silent
+				
+				
+			} else {
+			$aR = Get-MsalToken -TenantId $tenantDomain -ClientId $clientId -RedirectUri 'urn:ietf:wg:oauth:2.0:oob' -Interactive
+			}
+		}
+
+	return $aR
+}
+
+function New-AuthHeaders{
+	
+	Param($aR)
+
+	$aH = $null     
+	$aH = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
+	$aH.Add('Authorization', 'Bearer ' + $aR.AccessToken)
+	$aH.Add('Content-Type','application/json')
+	$aH.Add('Accept','application/json, text/plain')
+
+	return $aH
+
+}
 
 
 function Check-Token{
@@ -91,10 +111,13 @@ function Check-Token{
 	
 		if ($authResult.ExpiresOn.LocalDateTime -gt (get-date)){
 			$remaining = $authResult.ExpiresOn.LocalDateTime - (get-date)
-			Write-Host "Authentication valid for $remaining" -ForegroundColor Green
+			#Write-Host "Authentication valid for $remaining" -ForegroundColor Green
 			} else {
-				Write-Host 'Authentication expired' -ForegroundColor Red
-				throw
+				Write-Host 'Authentication expired, getting new token silently' -ForegroundColor Green
+				
+				$authResult = New-Auth $authResult
+				$authHeaders = New-AuthHeaders $authResult
+								
 				}
 	
 	} else {
@@ -548,6 +571,20 @@ function Remove-AzureADUserAuthenticationMethod{
 			
 		}
 }
+
+
+$MSAL = Get-Module -ListAvailable MSAL.ps -Verbose:$false -ErrorAction SilentlyContinue
+if ($MSAL) {
+			
+			$authResult = New-Auth
+			$authHeaders = New-AuthHeaders $authResult
+
+}  else {
+	Write-Host "Please install the MSAL.ps PowerShell module (Install-Module MSAL.ps) and try again" -ForegroundColor Red
+	throw
+	}
+
+
 
 
 Export-ModuleMember -Function Get-AzureADUserAuthenticationMethod
