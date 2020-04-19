@@ -3,7 +3,7 @@
 This PowerShell module simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. 
 To use this module, please take the following steps.
 
-Latest version: 0.7 - 18 April 2020
+Latest version: 0.8 - 19 April 2020
 
 #   Register an Azure AD application with permissions to call the API .
 
