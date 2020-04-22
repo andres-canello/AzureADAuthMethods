@@ -5,7 +5,7 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	Version 0.81 - 22 April 2020
+	Version 0.82 - 22 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
@@ -15,6 +15,9 @@
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
 	Gets the phone authentication methods set for the user.
+.EXAMPLE
+    PS C:\>Get-AzureADUser -SearchString user1@contoso.com | Get-AzureADUserAuthenticationMethod
+	Gets the phone authentication methods set for the user from the pipeline.
 .EXAMPLE
     PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345678' -phoneType mobile
 	Adds a new mobile phone authentication method to the user.
@@ -145,6 +148,9 @@ function Test-TokenValidity {
     PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -method phone
 	Gets the phone authentication methods set for the user.
 .EXAMPLE
+    PS C:\>Get-AzureADUser -SearchString user1@contoso.com | Get-AzureADUserAuthenticationMethod
+	Gets the phone authentication methods set for the user from the pipeline.
+.EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
 	Gets the phone authentication methods set for the user.
 #>
@@ -174,14 +180,14 @@ function Get-AzureADUserAuthenticationMethod {
 		[switch]$default,
 
 		[Alias('userID','UPN','UserPrincipalName')]
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'allMethods',Position = 1)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'allMethods',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[string]$ObjectId
 	)
 
@@ -283,13 +289,13 @@ function New-AzureADUserAuthenticationMethod {
 		[switch]$default,
 
 		[Alias('userID','UPN','UserPrincipalName')]
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
@@ -412,15 +418,15 @@ function Set-AzureADUserAuthenticationMethod {
 		[switch]$default,
 
 		[Alias('userID','UPN','UserPrincipalName')]
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'enableSmsSignIn',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'disableSmsSignIn',Position = 1)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'enableSmsSignIn',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'disableSmsSignIn',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
@@ -570,13 +576,13 @@ function Remove-AzureADUserAuthenticationMethod {
 		[switch]$securityQuestion,
 
 		[Alias('userID','UPN','UserPrincipalName')]
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
