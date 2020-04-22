@@ -5,12 +5,15 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	Version 0.8 - 19 April 2020
+	Version 0.81 - 22 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -method phone
+	Gets the phone authentication methods set for the user.
+.EXAMPLE
+    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
 	Gets the phone authentication methods set for the user.
 .EXAMPLE
     PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345678' -phoneType mobile
@@ -22,7 +25,7 @@
     PS C:\>Remove-AzureADUserAuthenticationMethod -phone -phoneType mobile user@contoso.com
     Removes the mobile phone authentication method for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod -phone -userID user1@contoso.com -enableSmsSignIn
+	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UserPrincipalName user1@contoso.com -enableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
 	
 .NOTES
@@ -45,7 +48,7 @@
 
 
 # Update this info
-$tenantDomain = 'canello1.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
+$tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
 $clientId = 'c79c106a-bdf0-475c-a6e0-2195c4b9a017' # REQUIRED -> Change to your AppID
 #$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # NOT SUPPORTED YET | OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
@@ -139,10 +142,10 @@ function Test-TokenValidity {
 	Gets a user's authentication methods.
 	All methods are returned by default. Pass the required method as a switch to only get that method.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
-	Gets all the authentication methods set for the user.
+    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -method phone
+	Gets the phone authentication methods set for the user.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
 	Gets the phone authentication methods set for the user.
 #>
 function Get-AzureADUserAuthenticationMethod {
@@ -170,6 +173,7 @@ function Get-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
 		[switch]$default,
 
+		[Alias('userID','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
@@ -178,7 +182,7 @@ function Get-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'allMethods',Position = 1)]
-		[string]$userID
+		[string]$ObjectId
 	)
 
 	Test-TokenValidity
@@ -193,12 +197,12 @@ function Get-AzureADUserAuthenticationMethod {
 			break
 		}
 		"phone" {
-			$uri = $authMethodUri -f $userId,'phone'
+			$uri = $authMethodUri -f $ObjectId,'phone'
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
 			$values = ConvertFrom-Json $response.Content
 
 			if ($values.value.count -eq 0) {
-				Write-Host "User $userId has no phone auth methods."
+				Write-Host "User $ObjectId has no phone auth methods."
 				return $null
 			} else { return $values.value }
 
@@ -209,12 +213,12 @@ function Get-AzureADUserAuthenticationMethod {
 			break
 		}
 		"password" {
-			$uri = $authMethodUri -f $userId,'password'
+			$uri = $authMethodUri -f $ObjectId,'password'
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
 			$values = ConvertFrom-Json $response.Content
 
 			if ($values.value.count -eq 0) {
-				Write-Host "User $userId has no password auth methods."
+				Write-Host "User $ObjectId has no password auth methods."
 				return $null
 			} else { return $values.value }
 
@@ -229,12 +233,12 @@ function Get-AzureADUserAuthenticationMethod {
 			break
 		}
 		"allMethods" {
-			$uri = $authMethodUri -f $userId,''
+			$uri = $authMethodUri -f $ObjectId,''
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
 			$values = ConvertFrom-Json $response.Content
 
 			if ($values.value.count -eq 0) {
-				Write-Host "User $userId has no auth methods."
+				Write-Host "User $ObjectId has no auth methods."
 				return $null
 			} else { return $values.value }
 
@@ -278,6 +282,7 @@ function New-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
 		[switch]$default,
 
+		[Alias('userID','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
@@ -285,7 +290,7 @@ function New-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
-		[string]$userID,
+		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
 		[string]$newPin,
@@ -336,7 +341,7 @@ function New-AzureADUserAuthenticationMethod {
 		}
 		"phone" {
 			Test-TokenValidity
-			$uri = $authMethodUri -f $userId,'phone'
+			$uri = $authMethodUri -f $ObjectId,'phone'
 			$postParams = @{}
 			$postParams.phoneNumber = $phoneNumber
 			$postParams.phoneType = $phoneType
@@ -376,7 +381,7 @@ function New-AzureADUserAuthenticationMethod {
     PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345679' -phoneType mobile
 	Modifies the existing mobile phone number for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod -phone -userID user1@contoso.com -enableSmsSignIn
+	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UPN user1@contoso.com -enableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
 #>
 function Set-AzureADUserAuthenticationMethod {
@@ -406,6 +411,7 @@ function Set-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
 		[switch]$default,
 
+		[Alias('userID','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
@@ -415,7 +421,7 @@ function Set-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'enableSmsSignIn',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'disableSmsSignIn',Position = 1)]
-		[string]$userID,
+		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
 		[string]$newPin,
@@ -481,7 +487,7 @@ function Set-AzureADUserAuthenticationMethod {
 			elseif ($phoneType -eq "mobile") { $methodId = "3179e48a-750b-4051-897c-87b9720928f7" }
 			else { $methodId = "e37fc753-ff3b-4958-9484-eaa9425c82bc" }
 
-			$uri = $authMethodUri -f $userId,'phone' + "/$methodId"
+			$uri = $authMethodUri -f $ObjectId,'phone' + "/$methodId"
 			$postParams = @{}
 			$postParams.phoneNumber = $phoneNumber
 			$postParams.phoneType = $phoneType
@@ -511,7 +517,7 @@ function Set-AzureADUserAuthenticationMethod {
 			break
 		}
 		"enableSmsSignIn" {
-			$uri = $authMethodUri -f $userId,'phone' + "/3179e48a-750b-4051-897c-87b9720928f7/enableSmsSignIn"
+			$uri = $authMethodUri -f $ObjectId,'phone' + "/3179e48a-750b-4051-897c-87b9720928f7/enableSmsSignIn"
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Post
 			$values = ConvertFrom-Json $response.Content
 
@@ -519,7 +525,7 @@ function Set-AzureADUserAuthenticationMethod {
 			break
 		}
 		"disableSmsSignIn" {
-			$uri = $authMethodUri -f $userId,'phone' + "/3179e48a-750b-4051-897c-87b9720928f7/disableSmsSignIn"
+			$uri = $authMethodUri -f $ObjectId,'phone' + "/3179e48a-750b-4051-897c-87b9720928f7/disableSmsSignIn"
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Post
 			$values = ConvertFrom-Json $response.Content
 
@@ -563,6 +569,7 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
 		[switch]$securityQuestion,
 
+		[Alias('userID','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1)]
@@ -570,7 +577,7 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1)]
-		[string]$userID,
+		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
 		[string]$serialNumber,
@@ -602,7 +609,7 @@ function Remove-AzureADUserAuthenticationMethod {
 			else { $methodId = "e37fc753-ff3b-4958-9484-eaa9425c82bc" }
 
 
-			$uri = $authMethodUri -f $userId,'phone' + "/$methodId"
+			$uri = $authMethodUri -f $ObjectId,'phone' + "/$methodId"
 			$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Delete
 			$values = ConvertFrom-Json $response.Content
 
