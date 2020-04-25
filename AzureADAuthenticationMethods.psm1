@@ -5,7 +5,7 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	Version 0.82 - 22 April 2020
+	Version 0.9 - 25 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
@@ -25,12 +25,21 @@
     PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345679' -phoneType mobile
 	Modifies the existing mobile phone number for the user.
 .EXAMPLE
-    PS C:\>Remove-AzureADUserAuthenticationMethod -phone -phoneType mobile user@contoso.com
-    Removes the mobile phone authentication method for the user.
-.EXAMPLE
 	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UserPrincipalName user1@contoso.com -enableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
-	
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password"
+	Sets "password" as a new password for the user. Doesn't return the operation result.
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password" -returnResult
+	Sets "password" as a new password for the user and waits 5 seconds for the operation result.
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -password
+	Sets new system generated password for the user. Not available for syncronised users.
+.EXAMPLE
+    PS C:\>Remove-AzureADUserAuthenticationMethod -phone -phoneType mobile user@contoso.com
+	Removes the mobile phone authentication method for the user.
+		
 .NOTES
     THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR 
@@ -52,7 +61,7 @@
 
 # Update this info
 $tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
-$clientId = 'c79c106a-bdf0-475c-a6e0-2195c4b9a017' # REQUIRED -> Change to your AppID
+$clientId = 'c79c106a-bdf0-475c-a6e0-219511b9a017' # REQUIRED -> Change to your AppID
 #$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # NOT SUPPORTED YET | OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
 # =====================================================================================================================================
@@ -389,6 +398,15 @@ function New-AzureADUserAuthenticationMethod {
 .EXAMPLE
 	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UPN user1@contoso.com -enableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password"
+	Sets "password" as a new password for the user. Doesn't return the operation result.
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password" -returnResult
+	Sets "password" as a new password for the user and waits 5 seconds for the operation result.
+.EXAMPLE
+	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -password
+	Sets new system generated password for the user. Not available for syncronised users.
 #>
 function Set-AzureADUserAuthenticationMethod {
 
@@ -457,8 +475,11 @@ function Set-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 2)]
 		[string]$emailAddress,
 
-		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
+		[Parameter(Mandatory = $False,ParameterSetName = 'password')]
 		[string]$newPassword,
+
+		[Parameter(Mandatory = $False,ParameterSetName = 'password')]
+		[switch]$returnResult,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
 		[string]$question,
@@ -511,7 +532,29 @@ function Set-AzureADUserAuthenticationMethod {
 			break
 		}
 		"password" {
-			Write-Host "Setting password method is not yet supported."
+			$uri = $authMethodUri -f $ObjectId,'password' + "/28c10230-6103-485e-b985-444c60001490/resetPassword"
+			if ($newPassword){
+				$postParams = @{}
+				$postParams.newPassword = $newPassword
+				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
+	
+				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Post -Body $json
+			}else{
+				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Post
+			}
+			$values = ConvertFrom-Json $response.Content
+
+			# Check password reset result
+			if (($response.StatusCode -eq "202") -and $returnResult){
+				Write-Host "Waiting for a response..."
+				Start-Sleep -Seconds 5
+				$oR = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $response.Headers.Location -Method Get
+				$operationResult = ConvertFrom-Json $oR.Content
+
+				$operationResult
+			}
+			
+			return $values	
 			break
 		}
 		"securityQuestion" {

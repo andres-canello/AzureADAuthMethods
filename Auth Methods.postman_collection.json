@@ -1,0 +1,582 @@
+{
+	"info": {
+		"_postman_id": "b2026161-8971-4129-9b64-ec5c4082cf8e",
+		"name": "Auth Methods",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Auth Methods",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/Methods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"Methods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Phone Auth Methods",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phoneMethods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phoneMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Password Method",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/passwordMethods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"passwordMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Default Auth Method [NotImplemented]",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/defaultMethod",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"defaultMethod"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New MOBILE Auth Phone Method",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneType\": \"mobile\",\n\t\"phoneNumber\": \"+61417586113\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phoneMethods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phoneMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify MOBILE Auth Phone Method",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneType\": \"mobile\",\n\t\"phoneNumber\": \"+61417831260\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/3179e48a-750b-4051-897c-87b9720928f7",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"3179e48a-750b-4051-897c-87b9720928f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove MOBILE Auth Phone Method",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/3179e48a-750b-4051-897c-87b9720928f7",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"3179e48a-750b-4051-897c-87b9720928f7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New AltMOBILE Auth Phone Method",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneType\": \"alternateMobile\",\n\t\"phoneNumber\": \"+61417883123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phoneMethods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phoneMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify AltMOBILE Auth Phone Method",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneType\": \"alternateMobile\",\n\t\"phoneNumber\": \"+61417881312\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/b6332ec1-7057-4abe-9331-3d72feddfe41",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"b6332ec1-7057-4abe-9331-3d72feddfe41"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove AltMOBILE Auth Phone Method",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/b6332ec1-7057-4abe-9331-3d72feddfe41",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"b6332ec1-7057-4abe-9331-3d72feddfe41"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New OFFICE Auth Phone Method",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneType\": \"office\",\n\t\"phoneNumber\": \"+61731181234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phoneMethods",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phoneMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove OFFICE Auth Phone Method",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/e37fc753-ff3b-4958-9484-eaa9425c82bc",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"e37fc753-ff3b-4958-9484-eaa9425c82bc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Enable SMS Sign In",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/3179e48a-750b-4051-897c-87b9720928f7/enableSmsSignIn",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"3179e48a-750b-4051-897c-87b9720928f7",
+						"enableSmsSignIn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Disable SMS Sign In",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/phonemethods/3179e48a-750b-4051-897c-87b9720928f7/disableSmsSignIn",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"phonemethods",
+						"3179e48a-750b-4051-897c-87b9720928f7",
+						"disableSmsSignIn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newPassword\": \"2020-04-22T04:15:29\"\n}"
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/passwordmethods/28c10230-6103-485e-b985-444c60001490/resetPassword",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"passwordmethods",
+						"28c10230-6103-485e-b985-444c60001490",
+						"resetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://graph.microsoft.com/beta/users/user@contoso.com/authentication/operations/355fdacc-f87c-43de-89f1-2bfb686132f0",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"beta",
+						"users",
+						"user@contoso.com",
+						"authentication",
+						"operations",
+						"355fdacc-f87c-43de-89f1-2bfb686132f0"
+					],
+					"query": [
+						{
+							"key": "aadgdc",
+							"value": "BY01P",
+							"disabled": true
+						},
+						{
+							"key": "aadgsu",
+							"value": "ssprprod-a",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "your access token goes here",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5a993406-f354-4dc4-9605-c0da0ff30ba4",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "de5d47f0-c1a6-4af4-ac2e-d89a7ea022f0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
