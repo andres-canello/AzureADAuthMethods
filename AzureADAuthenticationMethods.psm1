@@ -5,39 +5,39 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	Version 0.9 - 25 April 2020
+	Version 0.91 - 26 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -Phone
 	Gets the phone authentication methods set for the user.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -Phone
 	Gets the phone authentication methods set for the user.
 .EXAMPLE
     PS C:\>Get-AzureADUser -SearchString user1@contoso.com | Get-AzureADUserAuthenticationMethod
 	Gets the phone authentication methods set for the user from the pipeline.
 .EXAMPLE
-    PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345678' -phoneType mobile
+    PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345678' -PhoneType mobile
 	Adds a new mobile phone authentication method to the user.
 .EXAMPLE
-    PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345679' -phoneType mobile
+    PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345679' -PhoneType mobile
 	Modifies the existing mobile phone number for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UserPrincipalName user1@contoso.com -enableSmsSignIn
+	PS C:\>Set-AzureADUserAuthenticationMethod -Phone -UserPrincipalName user1@contoso.com -EnableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password"
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password"
 	Sets "password" as a new password for the user. Doesn't return the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password" -returnResult
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password" -ReturnResult
 	Sets "password" as a new password for the user and waits 5 seconds for the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -password
+	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -Password
 	Sets new system generated password for the user. Not available for syncronised users.
 .EXAMPLE
-    PS C:\>Remove-AzureADUserAuthenticationMethod -phone -phoneType mobile user@contoso.com
+    PS C:\>Remove-AzureADUserAuthenticationMethod -Phone -PhoneType mobile user@contoso.com
 	Removes the mobile phone authentication method for the user.
 		
 .NOTES
@@ -61,7 +61,7 @@
 
 # Update this info
 $tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
-$clientId = 'c79c106a-bdf0-475c-a6e0-219511b9a017' # REQUIRED -> Change to your AppID
+$clientId = 'c79c106a-bdf0-475c-a6e0-2115c111a017' # REQUIRED -> Change to your AppID
 #$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # NOT SUPPORTED YET | OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
 # =====================================================================================================================================
@@ -154,13 +154,13 @@ function Test-TokenValidity {
 	Gets a user's authentication methods.
 	All methods are returned by default. Pass the required method as a switch to only get that method.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -Phone
 	Gets the phone authentication methods set for the user.
 .EXAMPLE
     PS C:\>Get-AzureADUser -SearchString user1@contoso.com | Get-AzureADUserAuthenticationMethod
 	Gets the phone authentication methods set for the user from the pipeline.
 .EXAMPLE
-    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -method phone
+    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -Phone
 	Gets the phone authentication methods set for the user.
 #>
 function Get-AzureADUserAuthenticationMethod {
@@ -168,27 +168,27 @@ function Get-AzureADUserAuthenticationMethod {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin')]
-		[switch]$pin,
+		[switch]$Pin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[switch]$oath,
+		[switch]$Oath,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[switch]$phone,
+		[switch]$Phone,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email')]
-		[switch]$email,
+		[switch]$Email,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[switch]$password,
+		[switch]$Password,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[switch]$securityQuestion,
+		[switch]$SecurityQuestion,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
-		[switch]$default,
+		[switch]$Default,
 
-		[Alias('userID','UPN','UserPrincipalName')]
+		[Alias('UserId','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -269,7 +269,7 @@ function Get-AzureADUserAuthenticationMethod {
 	Creates a new authentication method for the user.
 	Use to create a new method type for the user. To modify a method, use Set-AzureADUserAuthenticationMethod.
 .EXAMPLE
-    PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345678' -phoneType mobile
+    PS C:\>New-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345678' -PhoneType mobile
 	Adds a new mobile phone authentication method to the user.
 #>
 function New-AzureADUserAuthenticationMethod {
@@ -277,27 +277,27 @@ function New-AzureADUserAuthenticationMethod {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin')]
-		[switch]$pin,
+		[switch]$Pin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[switch]$oath,
+		[switch]$Oath,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[switch]$phone,
+		[switch]$Phone,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email')]
-		[switch]$email,
+		[switch]$Email,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[switch]$password,
+		[switch]$Password,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[switch]$securityQuestion,
+		[switch]$SecurityQuestion,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
-		[switch]$default,
+		[switch]$Default,
 
-		[Alias('userID','UPN','UserPrincipalName')]
+		[Alias('UserId','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -308,40 +308,40 @@ function New-AzureADUserAuthenticationMethod {
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
-		[string]$newPin,
+		[string]$NewPin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$secretKey,
+		[string]$SecretKey,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[int]$timeIntervalInSeconds,
+		[int]$TimeIntervalInSeconds,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$serialNumber,
+		[string]$SerialNumber,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$manufacturer,
+		[string]$Manufacturer,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$model,
+		[string]$Model,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[string]$phoneNumber,
+		[string]$PhoneNumber,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[ValidateSet("mobile","alternateMobile","office")] [string]$phoneType,
+		[ValidateSet("mobile","alternateMobile","office")] [string]$PhoneType,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 2)]
-		[string]$emailAddress,
+		[string]$EmailAddress,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[string]$newPassword,
+		[string]$NewPassword,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[string]$question,
+		[string]$Question,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[string]$answer
+		[string]$Answer
 
 	)
 
@@ -393,19 +393,19 @@ function New-AzureADUserAuthenticationMethod {
 	Modifies an authentication method for the user. Manages SMS Sign In for mobile phone method.
 	Use to modify an existing authentication method for the user. To create a new method, use New-AzureADUserAuthenticationMethod.
 .EXAMPLE
-    PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -phone -phoneNumber '+61412345679' -phoneType mobile
+    PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345679' -PhoneType mobile
 	Modifies the existing mobile phone number for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod -phone -UPN user1@contoso.com -enableSmsSignIn
+	PS C:\>Set-AzureADUserAuthenticationMethod -Phone -UPN user1@contoso.com -EnableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password"
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password"
 	Sets "password" as a new password for the user. Doesn't return the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -password -newpassword "password" -returnResult
+	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password" -ReturnResult
 	Sets "password" as a new password for the user and waits 5 seconds for the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -password
+	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -Password
 	Sets new system generated password for the user. Not available for syncronised users.
 #>
 function Set-AzureADUserAuthenticationMethod {
@@ -413,29 +413,29 @@ function Set-AzureADUserAuthenticationMethod {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin')]
-		[switch]$pin,
+		[switch]$Pin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[switch]$oath,
+		[switch]$Oath,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'enableSmsSignIn')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'disableSmsSignIn')]
-		[switch]$phone,
+		[switch]$Phone,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email')]
-		[switch]$email,
+		[switch]$Email,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[switch]$password,
+		[switch]$Password,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[switch]$securityQuestion,
+		[switch]$SecurityQuestion,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
-		[switch]$default,
+		[switch]$Default,
 
-		[Alias('userID','UPN','UserPrincipalName')]
+		[Alias('UserId','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -448,53 +448,53 @@ function Set-AzureADUserAuthenticationMethod {
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 2)]
-		[string]$newPin,
+		[string]$NewPin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$secretKey,
+		[string]$SecretKey,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[int]$timeIntervalInSeconds,
+		[int]$TimeIntervalInSeconds,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$serialNumber,
+		[string]$SerialNumber,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$manufacturer,
+		[string]$Manufacturer,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$model,
+		[string]$Model,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[string]$phoneNumber,
+		[string]$PhoneNumber,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
 		[Parameter(Mandatory = $False,ParameterSetName = 'default')]
-		[ValidateSet("mobile","alternateMobile","office")] [string]$phoneType,
+		[ValidateSet("mobile","alternateMobile","office")] [string]$PhoneType,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 2)]
-		[string]$emailAddress,
+		[string]$EmailAddress,
 
 		[Parameter(Mandatory = $False,ParameterSetName = 'password')]
-		[string]$newPassword,
+		[string]$NewPassword,
 
 		[Parameter(Mandatory = $False,ParameterSetName = 'password')]
-		[switch]$returnResult,
+		[switch]$ReturnResult,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[string]$question,
+		[string]$Question,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[string]$answer,
+		[string]$Answer,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
-		[string]$defaultMethod,
+		[string]$DefaultMethod,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'enableSmsSignIn')]
-		[switch]$enableSmsSignIn,
+		[switch]$EnableSmsSignIn,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'disableSmsSignIn')]
-		[switch]$disableSmsSignIn
+		[switch]$DisableSmsSignIn
 
 	)
 
@@ -593,7 +593,7 @@ function Set-AzureADUserAuthenticationMethod {
 	Removes an authentication method from the user.
 	Use to remove an existing authentication method for the user.
 .EXAMPLE
-    PS C:\>Remove-AzureADUserAuthenticationMethod -phone -phoneType mobile user@contoso.com
+    PS C:\>Remove-AzureADUserAuthenticationMethod -Phone -PhoneType mobile user@contoso.com
     Removes the mobile phone authentication method for the user.
 #>
 function Remove-AzureADUserAuthenticationMethod {
@@ -601,24 +601,24 @@ function Remove-AzureADUserAuthenticationMethod {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin')]
-		[switch]$pin,
+		[switch]$Pin,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[switch]$oath,
+		[switch]$Oath,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[switch]$phone,
+		[switch]$Phone,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email')]
-		[switch]$email,
+		[switch]$Email,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[switch]$password,
+		[switch]$Password,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[switch]$securityQuestion,
+		[switch]$SecurityQuestion,
 
-		[Alias('userID','UPN','UserPrincipalName')]
+		[Alias('UserId','UPN','UserPrincipalName')]
 		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -629,16 +629,16 @@ function Remove-AzureADUserAuthenticationMethod {
 		[string]$ObjectId,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[string]$serialNumber,
+		[string]$SerialNumber,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[ValidateSet("mobile","alternateMobile","office")] [string]$phoneType,
+		[ValidateSet("mobile","alternateMobile","office")] [string]$PhoneType,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 2)]
-		[string]$emailAddress,
+		[string]$EmailAddress,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[string]$question
+		[string]$Question
 
 	)
 
