@@ -5,7 +5,7 @@
     This module helps Azure AD administrators managing authentication methods for users.
 	Get the latest version and report issues here: https://github.com/andres-canello/AzureADAuthMethods
 	Andres Canello https://twitter.com/andrescanello
-	Version 0.91 - 26 April 2020
+	Version 0.92 - 28 April 2020
 .EXAMPLE
     PS C:\>Get-AzureADUserAuthenticationMethod user@contoso.com
 	Gets all the authentication methods set for the user.
@@ -60,8 +60,8 @@
 
 
 # Update this info
-$tenantDomain = 'contoso.onmicrosoft.com' # REQUIRED -> Change to your tenant domain
-$clientId = 'c79c106a-bdf0-475c-a6e0-2115c111a017' # REQUIRED -> Change to your AppID
+$tenantDomain = '' # REQUIRED -> Change to your tenant domain (contoso.onmicrosoft.com)
+$clientId = '' # REQUIRED -> Change to your AppID / ClientId
 #$certThumbprint = '1C821E0590DB1E5112323FABF451097731168F8EB'  # NOT SUPPORTED YET | OPTIONAL -> Set only if using App Permissions and a certificate to authenticate
 
 # =====================================================================================================================================
@@ -683,8 +683,12 @@ if (-not $MSAL) {
 
 	Write-Host "Please install the MSAL.ps PowerShell module (Install-Module MSAL.ps) and try again" -ForegroundColor Red
 	throw
-	#$authResult = New-Auth
-	#$authHeaders = New-AuthHeaders $authResult
+}
+
+if (($tenantDomain -eq '') -or ($clientId -eq '')) {
+
+	Write-Host "Please open the file AzureADAuthenticationMethods.psm1 and update with your tenant domain and Client Id" -ForegroundColor Red 
+	throw
 }
 
 Export-ModuleMember -Function Get-AzureADUserAuthenticationMethod
