@@ -17,7 +17,7 @@ urn:ietf:wg:oauth:2.0:oob
 6.	When the application is registered, copy the Application (client) ID value, and save the value for later – we will use it in the PS module.
 7.	Click on “API permissions” and assign the following permissions:
 
-  Graph API - UserAuthenticationMethod.ReadWrite.All
+  Graph API - DELEGATED - UserAuthenticationMethod.ReadWrite.All
 
 8.	Under the API Permissions page, click Grant admin consent for… and follow the prompts.
 
