@@ -1,4 +1,4 @@
-# Authentication Methods API PS Module
+﻿# Authentication Methods API PS Module
 
 This PowerShell module simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. 
 To use this module, please take the following steps.

@@ -1,0 +1,11 @@
+﻿TOPIC
+	about_AzureADAuthMethods
+	
+SHORT DESCRIPTION
+	Explains how to use the AzureADAuthMethods powershell module
+	
+LONG DESCRIPTION
+	<Insert Content here>
+
+KEYWORDS
+	AzureADAuthMethods
