@@ -1,147 +1,99 @@
 function Get-AzureADUserAuthenticationMethod {
-
-	[CmdletBinding()]
-	param(
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin')]
-		[switch]$Pin,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath')]
-		[switch]$Oath,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone')]
-		[switch]$Phone,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'email')]
-		[switch]$Email,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'password')]
-		[switch]$Password,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion')]
-		[switch]$SecurityQuestion,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'FIDO2')]
-		[switch]$FIDO2,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
-		[switch]$PasswordlessMicrosoftAuthenticator,
-
-		[Parameter(Mandatory = $True,ParameterSetName = 'default')]
-		[switch]$Default,
-
-		[Alias('UserId','UPN','UserPrincipalName')]
-		[Parameter(Mandatory = $True,ParameterSetName = 'pin',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'oath',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'phone',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'email',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'password',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'FIDO2',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'passwordlessMicrosoftAuthenticator',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'securityQuestion',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'default',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[Parameter(Mandatory = $True,ParameterSetName = 'allMethods',Position = 1,ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-		[string]$ObjectId
+	<#
+	.SYNOPSIS
+	    Gets a user's authentication methods.
+	.DESCRIPTION
+		Gets a user's authentication methods.
+		All methods are returned by default. Pass the required method as a switch to only get that method.
+	.EXAMPLE
+	    PS C:\>Get-AzureADUserAuthenticationMethod -ObjectId user@contoso.com -Phone
+		Gets the phone authentication methods set for the user.
+	.EXAMPLE
+	    PS C:\>Get-AzureADUser -SearchString user1@contoso.com | Get-AzureADUserAuthenticationMethod
+		Gets the phone authentication methods set for the user from the pipeline.
+	.EXAMPLE
+	    PS C:\>Get-AzureADUserAuthenticationMethod -UserPrincipalName user@contoso.com -Phone
+		Gets the phone authentication methods set for the user.
+	#>
+	[CmdletBinding(DefaultParameterSetName = 'allMethods')]
+	param (
+		[Parameter(Mandatory = $True, ParameterSetName = 'pin')]
+		[switch]
+		$Pin,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
+		[switch]
+		$Oath,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'phone')]
+		[switch]
+		$Phone,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'email')]
+		[switch]
+		$Email,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'password')]
+		[switch]
+		$Password,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'securityQuestion')]
+		[switch]
+		$SecurityQuestion,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'FIDO2')]
+		[switch]
+		$FIDO2,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
+		[switch]
+		$PasswordlessMicrosoftAuthenticator,
+		
+		[Parameter(Mandatory = $True, ParameterSetName = 'default')]
+		[switch]
+		$Default,
+		
+		[Alias('UserId', 'UPN', 'UserPrincipalName')]
+		[Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$ObjectId
 	)
-
-	Process {
-
-		Test-TokenValidity
-
-		switch -Wildcard ($PSCmdlet.ParameterSetName) {
-			"pin" {
-				Write-Host "Getting pin method is not yet supported."
-				break
-			}
-			"oath" {
-				Write-Host "Getting oath method is not yet supported."
-				break
-			}
+	begin {
+		$common = @{
+			Method = 'GET'
+			GetValues = $true
+		}
+	}
+	process {
+		$values = switch ($PSCmdlet.ParameterSetName) {
 			"phone" {
-				$uri = $authMethodUri -f $ObjectId,'phone'
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no phone auth methods."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/phone"
 				break
 			}
 			"email" {
-				$uri = $authMethodUri -f $ObjectId,'email'
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no email auth method."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/email"
 				break
 			}
 			"password" {
-				$uri = $authMethodUri -f $ObjectId,'password'
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no password auth methods."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/password"
 				break
 			}
 			"FIDO2" {
-				$uri = $authMethodUri -f $ObjectId,'fido2'
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no FIDO2 Security Keys."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/fido2"
 				break
 			}
 			"passwordlessMicrosoftAuthenticator" {
-				$uri = $authMethodUri -f $ObjectId,'passwordlessMicrosoftAuthenticator'
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no devices configured for Microsoft Authenticator Phone Sign-in."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
-				break
-			}
-			"securityQuestion" {
-				Write-Host "Getting security question method is not yet supported."
-				break
-			}
-			"default" {
-				Write-Host "Getting the default method is not yet supported."
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticator"
 				break
 			}
 			"allMethods" {
-				$uri = $authMethodUri -f $ObjectId,''
-				$response = Invoke-WebRequest -UseBasicParsing -Headers $authHeaders -Uri $uri -Method Get
-				$values = ConvertFrom-Json $response.Content
-
-				if ($values.value.count -eq 0) {
-					Write-Host "User $ObjectId has no auth methods."
-				} else {
-					$Methods = Add-UserToMethods -Methods $values.value -ObjectId $ObjectId
-					return $Methods
-				}
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication"
 				break
 			}
+			default {
+				throw "Getting the $($PSCmdlet.ParameterSetName) method is not yet supported."
+			}
 		}
+		$values | Add-Member -NotePropertyName userObjectId -NotePropertyValue $ObjectId -PassThru
 	}
 }

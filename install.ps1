@@ -45,7 +45,7 @@ Param (
 $ModuleName = "AzureADAuthMethods"
 
 # Base path to the github repository
-$BaseUrl = "https://github.com/<InsertUsernameHere>/AzureADAuthMethods"
+$BaseUrl = "https://github.com/andres-canello/AzureADAuthMethods"
 
 # If the module is in a subfolder of the cloned repository, specify relative path here. Empty string to skip.
 $SubFolder = "AzureADAuthMethods"

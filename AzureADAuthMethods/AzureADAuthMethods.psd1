@@ -26,7 +26,7 @@
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules = @(
-		@{ ModuleName='PSFramework'; ModuleVersion='1.4.149' }
+		'MSAL.PS'
 	)
 	
 	# Assemblies that must be loaded prior to importing this module
@@ -39,16 +39,22 @@
 	# FormatsToProcess = @('xml\AzureADAuthMethods.Format.ps1xml')
 	
 	# Functions to export from this module
-	FunctionsToExport = ''
+	FunctionsToExport = @(
+		'Connect-AzureADUserAuthentication'
+		'Get-AzureADUserAuthenticationMethod'
+		'New-AzureADUserAuthenticationMethod'
+		'Remove-AzureADUserAuthenticationMethod'
+		'Set-AzureADUserAuthenticationMethod'
+	)
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = ''
+	# CmdletsToExport = ''
 	
 	# Variables to export from this module
-	VariablesToExport = ''
+	# VariablesToExport = ''
 	
 	# Aliases to export from this module
-	AliasesToExport = ''
+	# AliasesToExport = ''
 	
 	# List of all modules packaged with this module
 	ModuleList = @()

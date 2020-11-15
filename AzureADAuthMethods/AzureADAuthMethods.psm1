@@ -2,7 +2,7 @@
 $script:ModuleVersion = (Import-PowerShellDataFile -Path "$($script:ModuleRoot)\AzureADAuthMethods.psd1").ModuleVersion
 
 # Detect whether at some level dotsourcing was enforced
-$script:doDotSource = Get-PSFConfigValue -FullName AzureADAuthMethods.Import.DoDotSource -Fallback $false
+$script:doDotSource = $false
 if ($AzureADAuthMethods_dotsourcemodule) { $script:doDotSource = $true }
 
 <#
@@ -14,9 +14,9 @@ This is important when testing for paths.
 #>
 
 # Detect whether at some level loading individual module files, rather than the compiled module was enforced
-$importIndividualFiles = Get-PSFConfigValue -FullName AzureADAuthMethods.Import.IndividualFiles -Fallback $false
+$importIndividualFiles = $false
 if ($AzureADAuthMethods_importIndividualFiles) { $importIndividualFiles = $true }
-if (Test-Path (Resolve-PSFPath -Path "$($script:ModuleRoot)\..\.git" -SingleItem -NewChild)) { $importIndividualFiles = $true }
+if (Test-Path "$($script:ModuleRoot)\..\.git") { $importIndividualFiles = $true }
 if ("<was not compiled>" -eq '<was not compiled>') { $importIndividualFiles = $true }
 	
 function Import-ModuleFile

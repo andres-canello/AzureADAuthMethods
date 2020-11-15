@@ -9,6 +9,3 @@ After building the module, this file will be completely ignored, adding anything
 #>
 
 $moduleRoot = Split-Path (Split-Path $PSScriptRoot)
-
-# Load the strings used in messages
-"$moduleRoot\internal\scripts\strings.ps1"

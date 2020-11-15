@@ -34,7 +34,7 @@ if (-not $WorkingDirectory) { $WorkingDirectory = Split-Path $PSScriptRoot }
 #endregion Handle Working Directory Defaults
 
 # Prepare publish folder
-Write-PSFMessage -Level Important -Message "Creating and populating publishing directory"
+Write-Host "Creating and populating publishing directory"
 $publishDir = New-Item -Path $WorkingDirectory -Name publish -ItemType Directory -Force
 Copy-Item -Path "$($WorkingDirectory)\AzureADAuthMethods" -Destination $publishDir.FullName -Recurse -Force
 
@@ -85,15 +85,15 @@ $fileData = $fileData.Replace('"<compile code into here>"', ($text -join "`n`n")
 #region Updating the Module Version
 if ($AutoVersion)
 {
-	Write-PSFMessage -Level Important -Message "Updating module version numbers."
+	Write-Host "Updating module version numbers."
 	try { [version]$remoteVersion = (Find-Module 'AzureADAuthMethods' -Repository $Repository -ErrorAction Stop).Version }
 	catch
 	{
-		Stop-PSFFunction -Message "Failed to access $($Repository)" -EnableException $true -ErrorRecord $_
+		throw "Failed to access $($Repository) : $_"
 	}
 	if (-not $remoteVersion)
 	{
-		Stop-PSFFunction -Message "Couldn't find AzureADAuthMethods on repository $($Repository)" -EnableException $true
+		throw "Couldn't find AzureADAuthMethods on repository $($Repository)"
 	}
 	$newBuildNumber = $remoteVersion.Build + 1
 	[version]$localVersion = (Import-PowerShellDataFile -Path "$($publishDir.FullName)\AzureADAuthMethods\AzureADAuthMethods.psd1").ModuleVersion
@@ -105,16 +105,19 @@ if ($AutoVersion)
 if ($SkipPublish) { return }
 if ($LocalRepo)
 {
+	# Install prerequisites for this step
+	Install-Module PSModuleDevelopment
+
 	# Dependencies must go first
-	Write-PSFMessage -Level Important -Message "Creating Nuget Package for module: PSFramework"
+	Write-Host "Creating Nuget Package for module: PSFramework"
 	New-PSMDModuleNugetPackage -ModulePath (Get-Module -Name PSFramework).ModuleBase -PackagePath .
-	Write-PSFMessage -Level Important -Message "Creating Nuget Package for module: AzureADAuthMethods"
+	Write-Host "Creating Nuget Package for module: AzureADAuthMethods"
 	New-PSMDModuleNugetPackage -ModulePath "$($publishDir.FullName)\AzureADAuthMethods" -PackagePath .
 }
 else
 {
 	# Publish to Gallery
-	Write-PSFMessage -Level Important -Message "Publishing the AzureADAuthMethods module to $($Repository)"
+	Write-Host "Publishing the AzureADAuthMethods module to $($Repository)"
 	Publish-Module -Path "$($publishDir.FullName)\AzureADAuthMethods" -NuGetApiKey $ApiKey -Force -Repository $Repository
 }
 #endregion Publish
