@@ -36,19 +36,19 @@
 	
 	process {
 		if ($Thumbprint) {
-			try { $Certificate = Get-Item -Path (Join-Path -Path $CertificateStore -ChildPath $Thumbprint) -ErrorAction Stop }
+			try { $Certificate = Get-Item -Path (Join-Path -Path $CertificateStore -ChildPath $Thumbprint) }
 			catch { throw "Unable to find certificate $Thumbprint in certificate store $CertificateStore !" }
 		}
 		switch ($PSCmdlet.ParameterSetName) {
 			'Interactive' {
-				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -RedirectUri $RedirectUri -Interactive -ErrorAction Stop }
+				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -RedirectUri $RedirectUri -Interactive }
 				catch {
 					Write-Warning "Failed to authenticate to tenant $TenantID : $_"
 					throw
 				}
 			}
 			default {
-				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -ClientCertificate $Certificate -ErrorAction Stop }
+				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -ClientCertificate $Certificate }
 				catch {
 					Write-Warning "Failed to authenticate to tenant $TenantID : $_"
 					throw
