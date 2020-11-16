@@ -67,6 +67,8 @@ function Get-AzureADUserAuthenticationMethod {
 		$ObjectId
 	)
 	begin {
+		Assert-GraphConnection -Cmdlet $PSCmdlet
+
 		$common = @{
 			Method = 'GET'
 			GetValues = $false

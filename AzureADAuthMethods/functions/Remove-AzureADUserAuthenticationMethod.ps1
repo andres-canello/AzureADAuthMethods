@@ -78,6 +78,9 @@ function Remove-AzureADUserAuthenticationMethod {
 		
 	)
 	
+	begin {
+		Assert-GraphConnection -Cmdlet $PSCmdlet
+	}
 	process {
 		switch ($PSCmdlet.ParameterSetName) {
 			"phone" {
