@@ -25,7 +25,7 @@
 	{
 		if ($script:msgraphToken) { return }
 		
-		$exception = [System.InvalidOperationException]::new('Not yet connected to MSGraph. Use Connect-AzureADUserAuthentication to establish a connection!')
+		$exception = [System.InvalidOperationException]::new('Not yet connected to MSGraph. Use Connect-AzureADUserAuthenticationMethod to establish a connection!')
 		$errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, "NotConnected", 'InvalidOperation', $null)
 		
 		$Cmdlet.ThrowTerminatingError($errorRecord)
