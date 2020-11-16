@@ -114,6 +114,9 @@ function Update-AzureADUserAuthenticationMethod {
 		$DisableSmsSignIn
 	)
 	
+	begin {
+		Assert-GraphConnection -Cmdlet $PSCmdlet
+	}
 	process {
 		switch ($PSCmdlet.ParameterSetName) {
 			"phone" {
