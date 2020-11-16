@@ -40,11 +40,11 @@
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
-		'Connect-AzureADUserAuthentication'
+		'Connect-AzureADUserAuthenticationMethod'
 		'Get-AzureADUserAuthenticationMethod'
 		'New-AzureADUserAuthenticationMethod'
 		'Remove-AzureADUserAuthenticationMethod'
-		'Set-AzureADUserAuthenticationMethod'
+		'Update-AzureADUserAuthenticationMethod'
 	)
 	
 	# Cmdlets to export from this module

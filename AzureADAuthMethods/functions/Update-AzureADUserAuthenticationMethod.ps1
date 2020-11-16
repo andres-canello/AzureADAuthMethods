@@ -1,4 +1,4 @@
-function Set-AzureADUserAuthenticationMethod {
+function Update-AzureADUserAuthenticationMethod {
 	<#
 .SYNOPSIS
     Modifies an authentication method for the user. Manages SMS Sign In for mobile phone method.
@@ -6,19 +6,19 @@ function Set-AzureADUserAuthenticationMethod {
 	Modifies an authentication method for the user. Manages SMS Sign In for mobile phone method.
 	Use to modify an existing authentication method for the user. To create a new method, use New-AzureADUserAuthenticationMethod.
 .EXAMPLE
-    PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345679' -PhoneType mobile
+    PS C:\>Update-AzureADUserAuthenticationMethod user@contoso.com -Phone -PhoneNumber '+61412345679' -PhoneType mobile
 	Modifies the existing mobile phone number for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod -Phone -UPN user1@contoso.com -EnableSmsSignIn
+	PS C:\>Update-AzureADUserAuthenticationMethod -Phone -UPN user1@contoso.com -EnableSmsSignIn
 	Enables SMS sign-in for the existing mobile phone authentication method for the user.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password"
+	PS C:\>Update-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password"
 	Sets "password" as a new password for the user. Doesn't return the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password" -ReturnResult
+	PS C:\>Update-AzureADUserAuthenticationMethod user@contoso.com -Password -NewPassword "password" -ReturnResult
 	Sets "password" as a new password for the user and waits 5 seconds for the operation result.
 .EXAMPLE
-	PS C:\>Set-AzureADUserAuthenticationMethod clouduser@contoso.com -Password
+	PS C:\>Update-AzureADUserAuthenticationMethod clouduser@contoso.com -Password
 	Sets new system generated password for the user. Not available for syncronised users.
 #>
 	[CmdletBinding()]
@@ -128,7 +128,7 @@ function Set-AzureADUserAuthenticationMethod {
 					phoneType   = $PhoneType
 				}
 				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
-				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phone/$methodId" -Body $json
+				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phoneMethods/$methodId" -Body $json
 				break
 			}
 			"email" {
@@ -136,13 +136,13 @@ function Set-AzureADUserAuthenticationMethod {
 					emailAddress = $EmailAddress
 				}
 				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
-				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/email/3ddfcfc8-9383-446f-83cc-3ab9be4be18f" -Body $json
+				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/emailMethods/3ddfcfc8-9383-446f-83cc-3ab9be4be18f" -Body $json
 				break
 			}
 			"password" {
 				$parameters = @{
-					Method = 'PUT'
-					Query = "users/$ObjectId/authentication/password/28c10230-6103-485e-b985-444c60001490/resetPassword"
+					Method = 'POST'
+					Query = "users/$ObjectId/authentication/passwordMethods/28c10230-6103-485e-b985-444c60001490/resetPassword"
 				}
 				if ($NewPassword) {
 					$parameters.Body = @{
@@ -150,8 +150,9 @@ function Set-AzureADUserAuthenticationMethod {
 					} | ConvertTo-Json -Depth 99 -Compress
 				}
 				$response = Invoke-AzureAdRequest @parameters -Raw
-				if (-not $ReturnResult) { return $response.Content }
+				if (-not $ReturnResult) { return $response }
 				
+				# TODO: If RAW, use invoke-webrequest to get response headers.
 				# Check password reset result
 				if ($response.StatusCode -eq "202") {
 					Write-Host "Waiting for a response..."
@@ -162,11 +163,11 @@ function Set-AzureADUserAuthenticationMethod {
 				return $response.Content
 			}
 			"enableSmsSignIn" {
-				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phone/3179e48a-750b-4051-897c-87b9720928f7/enableSmsSignIn" -Body $json
+				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phoneMethods/3179e48a-750b-4051-897c-87b9720928f7/enableSmsSignIn" -Body $json
 				break
 			}
 			"disableSmsSignIn" {
-				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phone/3179e48a-750b-4051-897c-87b9720928f7/disableSmsSignIn" -Body $json
+				Invoke-AzureAdRequest -Method PUT -Query "users/$ObjectId/authentication/phoneMethods/3179e48a-750b-4051-897c-87b9720928f7/disableSmsSignIn" -Body $json
 				break
 			}
 			default {

@@ -24,7 +24,7 @@
 		Get raw response
 	
 	.EXAMPLE
-		PS C:\> Invoke-AzureAdRequest -Query 'users/3ec9f2ec-aeec-4ad9-ad18-b456288fdb32/authentication/phone' -Method GET
+		PS C:\> Invoke-AzureAdRequest -Query 'users/3ec9f2ec-aeec-4ad9-ad18-b456288fdb32/authentication/phonemethods' -Method GET
 		
 		Retrieve the phone authentication settings for the specified user.
 #>
@@ -64,8 +64,10 @@
 		try { $response = Invoke-RestMethod @parameters -ErrorAction Stop }
 		catch { throw }
 		
+		
 		if ($Raw) { return $response }
-		if ($GetValues) { return $response.Content.Value }
-		$response.Content
+		if ($GetValues) { return $response.Value }
+		$response.Value
+		
 	}
 }

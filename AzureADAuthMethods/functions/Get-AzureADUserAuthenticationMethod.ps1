@@ -21,9 +21,9 @@ function Get-AzureADUserAuthenticationMethod {
 		[switch]
 		$Pin,
 		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
+		[Parameter(Mandatory = $True, ParameterSetName = 'softwareOath')]
 		[switch]
-		$Oath,
+		$softwareOath,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'phone')]
 		[switch]
@@ -48,6 +48,14 @@ function Get-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
 		[switch]
 		$PasswordlessMicrosoftAuthenticator,
+
+		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
+		[switch]
+		$MicrosoftAuthenticator,
+
+		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
+		[switch]
+		$WindowsHelloForBusiness,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'default')]
 		[switch]
@@ -61,39 +69,47 @@ function Get-AzureADUserAuthenticationMethod {
 	begin {
 		$common = @{
 			Method = 'GET'
-			GetValues = $true
+			GetValues = $false
 		}
 	}
 	process {
 		$values = switch ($PSCmdlet.ParameterSetName) {
 			"phone" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/phone"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/phoneMethods"
 				break
 			}
 			"email" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/email"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/emailMethods"
 				break
 			}
 			"password" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/password"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/passwordMethods"
 				break
 			}
 			"FIDO2" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/fido2"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/fido2Methods"
 				break
 			}
 			"passwordlessMicrosoftAuthenticator" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticator"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticatorMethods"
+				break
+			}
+			"MicrosoftAuthenticator" {
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/MicrosoftAuthenticatorMethods"
+				break
+			}
+			"WindowsHelloForBusiness" {
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/windowsHelloForBusinessMethods"
 				break
 			}
 			"allMethods" {
-				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication"
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/methods"
 				break
 			}
 			default {
 				throw "Getting the $($PSCmdlet.ParameterSetName) method is not yet supported."
 			}
 		}
-		$values | Add-Member -NotePropertyName userObjectId -NotePropertyValue $ObjectId -PassThru
+		$values  | Add-Member -NotePropertyName userObjectId -NotePropertyValue $ObjectId -PassThru
 	}
 }

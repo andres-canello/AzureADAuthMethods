@@ -1,4 +1,4 @@
-﻿function Connect-AzureADUserAuthentication {
+﻿function Connect-AzureADUserAuthenticationMethod {
 	[CmdletBinding(DefaultParameterSetName = 'Interactive')]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -22,7 +22,7 @@
 		$Interactive,
 		
 		[string]
-		$ClientID = "1b730954-1685-4b74-9bfd-dac224a7b894",
+		$ClientID = "",
 		
 		[string]
 		$RedirectUri = "urn:ietf:wg:oauth:2.0:oob",

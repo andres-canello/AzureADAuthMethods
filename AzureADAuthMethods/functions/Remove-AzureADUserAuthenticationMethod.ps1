@@ -38,9 +38,19 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
 		[switch]
 		$PasswordlessMicrosoftAuthenticator,
+
+		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
+		[switch]
+		$MicrosoftAuthenticator,
+
+		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
+		[switch]
+		$WindowsHelloForBusiness,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'FIDO2')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
+		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
+		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
 		[string]
 		$MethodId,
 		
@@ -76,21 +86,27 @@ function Remove-AzureADUserAuthenticationMethod {
 					'mobile' { '3179e48a-750b-4051-897c-87b9720928f7' }
 					'office' { 'e37fc753-ff3b-4958-9484-eaa9425c82bc' }
 				}
-				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/phone/$methodId"
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/phoneMethods/$methodId"
 				break
 			}
 			"email" {
-				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/email/3ddfcfc8-9383-446f-83cc-3ab9be4be18f"
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/emailMethods/3ddfcfc8-9383-446f-83cc-3ab9be4be18f"
 				break
 			}
 			"FIDO2" {
-				#TODO: Fix broken ID
-				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/fido2/$MethodId"
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/fido2Methods/$MethodId"
 				break
 			}
 			"passwordlessMicrosoftAuthenticator" {
-				#TODO: Fix broken ID
-				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticator/$MethodId"
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticatorMethods/$MethodId"
+				break
+			}
+			"MicrosoftAuthenticator" {
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/MicrosoftAuthenticatorMethods/$MethodId"
+				break
+			}
+			"WindowsHelloForBusiness" {
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/windowsHelloForBusinessMethods/$MethodId"
 				break
 			}
 			default {

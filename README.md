@@ -39,7 +39,7 @@ Get-AzureADUserAuthenticationMethod
 
 New-AzureADUserAuthenticationMethod
 
-Set-AzureADUserAuthenticationMethod
+Update-AzureADUserAuthenticationMethod
 
 Remove-AzureADUserAuthenticationMethod
 
