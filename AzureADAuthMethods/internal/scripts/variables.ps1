@@ -9,5 +9,5 @@ $script:clientCertificate = $null
 
 # Connection Metadata
 $script:tenantID = ''
-$script:clientID = '1b730954-1685-4b74-9bfd-dac224a7b894'
+$script:clientID = ''
 $script:redirectUri = 'urn:ietf:wg:oauth:2.0:oob'
