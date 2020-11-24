@@ -1,11 +1,16 @@
 ﻿# Authentication Methods API PS Module
 
-This PowerShell module simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations.
-To use this module, please take the following steps.
+## NOTE: This is not an officially supported Microsoft module. If you are looking for a Microsoft supported module to manage authentication methods check: https://www.powershellgallery.com/packages/Microsoft.Graph.Identity.signins
 
-Latest version: 16 November 2020
+This is a community supported PowerShell module which simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. Feel free to contribute.
 
-#   Register an Azure AD application with permissions to call the API .
+There are two ways to authenticate to your tenant, using a user identity or using an application identity and a certificate. For automation, consider using an application identity and a correctly secured certificate.
+Both ways require you to register an application on your tenant.
+
+To use this module, follow these steps on your tenant:
+
+
+## Register an Azure AD application with permissions to call the API using a user identity
 
 The Graph authorization model requires that an application must be consented by a user or administrator prior to accessing an organization’s data.  
 1.	Log into the Azure portal as a Global Administrator.
@@ -14,26 +19,69 @@ The Graph authorization model requires that an application must be consented by 
 4.	Provide a name for the application, set the Redirect URI to “Public client/Native”, and type the following as the Redirect URI:
 urn:ietf:wg:oauth:2.0:oob
 5.	Click “Register”.
-6.	When the application is registered, copy the Application (client) ID value, and save the value for later – we will use it in the PS module.
-7.	Click on “API permissions” and assign the following permissions:
+6.	When the application is registered, copy the Application (client) ID value, and save the value for later.
+7.	Click on “API permissions”, then click “Add a permission”
+8.	Select “Microsoft Graph”, then click “Delegated permissions” and add the following permission
+UserAuthenticationMethod.ReadWrite.All (if your use cases only require read or to interact with the signed in user’s authentication methods, you can choose to use UserAuthenticationMethod.Read.All, UserAuthenticationMethod.Read or UserAuthenticationMethod.ReadWrite)
+9.	Under the API Permissions page, click on Grant admin consent for… and follow the prompts.
 
-  Graph API - DELEGATED - UserAuthenticationMethod.ReadWrite.All
 
-8.	Under the API Permissions page, click Grant admin consent for… and follow the prompts.
+## Register an Azure AD application with permissions to call the API using an application identity
 
-#   Edit PowerShell module
+1.	Log into the Azure portal as a Global Administrator.
+2.	Navigate to the Azure AD extension and click on “App registrations” in the Manage section.
+3.	Click on “New registration” button at the top of the page.
+4.	Provide a name for the application, do not set a Redirect URI.
+5.	Click “Register”.
+6.	When the application is registered, copy the Application (client) ID value, and save the value for later.
+7.	Click on “API permissions”, then click “Add a permission”
+8.	 Select “Application permissions” and add the following permission:
+UserAuthenticationMethod.ReadWrite.All (if your use cases only require read, you can choose to use UserAuthenticationMethod.Read.All)
+9.	Under the API Permissions page, Click on Grant admin consent for… and follow the prompts.
 
-1.	Open AzureADAuthenticationMethods.psm1 and change the following: 
-  a.	Replace $tenantDomain with the domain of your tenant
-  b.	Replace $clientId with the App ID you created earlier. 
+### Follow these steps to create a self signed certificate and associate it with your application.
+
+Your application ObjectId
+$appObjectId = ""
+
+#### Create the self signed cert
+$currentDate = Get-Date
+$endDate = $currentDate.AddYears(1)
+$notAfter = $endDate.AddYears(1)
+$pwd = "ChooseAPassword"
+$thumb = (New-SelfSignedCertificate -CertStoreLocation cert:\currentuser\my -DnsName com.foo.bar -KeyExportPolicy Exportable -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter).Thumbprint
+$pwd = ConvertTo-SecureString -String $pwd -Force -AsPlainText
+Export-PfxCertificate -cert "cert:\currentuser\my\$thumb" -FilePath c:\temp\examplecert.pfx -Password $pwd
+
+#### Load the certificate
+$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate("C:\temp\examplecert.pfx", $pwd)
+$keyValue = [System.Convert]::ToBase64String($cert.GetRawCertData())
+#Connect-AzureAD
+
+#### Add the cert credential to your application
+New-AzureADApplicationKeyCredential -ObjectId $appObjectId -CustomKeyIdentifier "Test123" -StartDate $currentDate -EndDate $endDate -Type AsymmetricX509Cert -Usage Verify -Value $keyValue
+Write-Host "Take note of this certificate thumbprint: $thumb"
+
+Remember to take note of the certificate thumbprint.
+
+
+
+## Connect to your tenant
+
+### Using a user identity:
+
+Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId' -Thumbprint 'your_certificate_thumbprint'
+
+### Using an application identity:
+
+Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId'
+
+
+
  
-#   Using the PowerShell module
+##   Using the PowerShell module
 
-1.	Open PowerShell and navigate to the folder where you saved the AzureADAuthenticationMethods.psm1 file.
-2.  Run Import-Module .\AzureADAuthenticationMethods.psm1 and authenticate with a user with appropiate permissions
-
-
-Available commands:
+Available commands, run Get-Help command for additional info.
 
 Get-AzureADUserAuthenticationMethod
 
