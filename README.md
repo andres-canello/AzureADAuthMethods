@@ -70,11 +70,11 @@ Remember to take note of the certificate thumbprint.
 
 ### Using a user identity:
 
-Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId' -Thumbprint 'your_certificate_thumbprint'
+Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId'
 
 ### Using an application identity:
 
-Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId'
+Connect-AzureADUserAuthenticationMethod -TenantId your_tenant.onmicrosoft.com -ClientID 'your_app_ClientId'  -Thumbprint 'your_certificate_thumbprint'
 
 
 
