@@ -2,7 +2,9 @@
 
 ## NOTE: This is not an officially supported Microsoft module. If you are looking for a Microsoft supported module to manage authentication methods check: https://www.powershellgallery.com/packages/Microsoft.Graph.Identity.signins
 
-This is a community supported PowerShell module which simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. Feel free to contribute.
+## This module is published on PowerShell Gallery, check: https://www.powershellgallery.com/packages/AzureADAuthMethods
+
+This is a community-supported PowerShell module which simplifies managing Authentication Methods for Azure AD users. The module calls the Authentication Methods Graph API endpoints to perform common operations. Feel free to contribute.
 
 There are two ways to authenticate to your tenant, using a user identity or using an application identity and a certificate. For automation, consider using an application identity and a correctly secured certificate.
 Both ways require you to register an application on your tenant.
