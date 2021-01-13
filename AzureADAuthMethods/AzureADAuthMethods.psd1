@@ -18,7 +18,7 @@
 	Copyright = 'Copyright (c) 2020 Microsoft Identity'
 	
 	# Description of the functionality provided by this module
-	Description = 'This module helps Azure AD administrators managing authentication methods for users.'
+	Description = 'This is a community-supported module helps Azure AD administrators managing authentication methods for users. To report issues and contribute go to https://github.com/andres-canello/AzureADAuthMethods'
 	
 	# Minimum version of the Windows PowerShell engine required by this module
 	PowerShellVersion = '5.0'
