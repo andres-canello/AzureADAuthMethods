@@ -20,6 +20,10 @@
 		[Parameter(ParameterSetName = 'Interactive')]
 		[switch]
 		$Interactive,
+
+		[Parameter(ParameterSetName = 'Interactive')]
+		[switch]
+		$DeviceCode,
 		
 		[string]
 		$ClientID = "",
@@ -41,7 +45,7 @@
 		}
 		switch ($PSCmdlet.ParameterSetName) {
 			'Interactive' {
-				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -RedirectUri $RedirectUri -Interactive }
+				try { $token = Get-MsalToken -TenantId $TenantId -ClientId $ClientID -RedirectUri $RedirectUri -Interactive -DeviceCode:$DeviceCode }
 				catch {
 					Write-Warning "Failed to authenticate to tenant $TenantID : $_"
 					throw
