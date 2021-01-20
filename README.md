@@ -24,7 +24,8 @@ urn:ietf:wg:oauth:2.0:oob
 6.	When the application is registered, copy the Application (client) ID value, and save the value for later.
 7.	Click on “API permissions”, then click “Add a permission”
 8.	Select “Microsoft Graph”, then click “Delegated permissions” and add the following permission
-UserAuthenticationMethod.ReadWrite.All (if your use cases only require read or to interact with the signed in user’s authentication methods, you can choose to use UserAuthenticationMethod.Read.All, UserAuthenticationMethod.Read or UserAuthenticationMethod.ReadWrite)
+UserAuthenticationMethod.ReadWrite.All (if your use cases only require read or to interact with the signed in user’s authentication methods, you can choose to use UserAuthenticationMethod.Read.All, UserAuthenticationMethod.Read or UserAuthenticationMethod.ReadWrite).
+Additionally, to use the ReturnDevices parameter for Windows Hello for Business and Microsoft Authenticator, add the Device.Read.All permission.
 9.	Under the API Permissions page, click on Grant admin consent for… and follow the prompts.
 
 
@@ -39,6 +40,7 @@ UserAuthenticationMethod.ReadWrite.All (if your use cases only require read or t
 7.	Click on “API permissions”, then click “Add a permission”
 8.	 Select “Application permissions” and add the following permission:
 UserAuthenticationMethod.ReadWrite.All (if your use cases only require read, you can choose to use UserAuthenticationMethod.Read.All)
+Additionally, to use the ReturnDevices parameter for Windows Hello for Business and Microsoft Authenticator, add the Device.Read.All permission.
 9.	Under the API Permissions page, Click on Grant admin consent for… and follow the prompts.
 
 ### Follow these steps to create a self signed certificate and associate it with your application.

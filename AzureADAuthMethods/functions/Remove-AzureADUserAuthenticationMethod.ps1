@@ -34,10 +34,6 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, ParameterSetName = 'FIDO2')]
 		[switch]
 		$FIDO2,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
-		[switch]
-		$PasswordlessMicrosoftAuthenticator,
 
 		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
 		[switch]
@@ -48,7 +44,6 @@ function Remove-AzureADUserAuthenticationMethod {
 		$WindowsHelloForBusiness,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'FIDO2')]
-		[Parameter(Mandatory = $True, ParameterSetName = 'passwordlessMicrosoftAuthenticator')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
 		[string]
@@ -98,10 +93,6 @@ function Remove-AzureADUserAuthenticationMethod {
 			}
 			"FIDO2" {
 				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/fido2Methods/$MethodId"
-				break
-			}
-			"passwordlessMicrosoftAuthenticator" {
-				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/passwordlessMicrosoftAuthenticatorMethods/$MethodId"
 				break
 			}
 			"MicrosoftAuthenticator" {
