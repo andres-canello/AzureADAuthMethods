@@ -46,6 +46,7 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, ParameterSetName = 'FIDO2')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
+		[Parameter(Mandatory = $True, ParameterSetName = 'temporaryAccessPass')]
 		[string]
 		$MethodId,
 		
@@ -69,7 +70,10 @@ function Remove-AzureADUserAuthenticationMethod {
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'securityQuestion')]
 		[string]
-		$Question
+		$Question,
+
+		[Parameter(Mandatory = $True,ParameterSetName = 'temporaryAccessPass')]
+		[switch]$TemporaryAccessPass
 		
 	)
 	
@@ -101,6 +105,10 @@ function Remove-AzureADUserAuthenticationMethod {
 			}
 			"WindowsHelloForBusiness" {
 				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/windowsHelloForBusinessMethods/$MethodId"
+				break
+			}
+			"temporaryAccessPass" {
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/temporaryAccessPassMethods/$MethodId"
 				break
 			}
 			default {

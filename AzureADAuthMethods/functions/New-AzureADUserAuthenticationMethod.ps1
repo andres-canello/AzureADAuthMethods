@@ -83,7 +83,20 @@ function New-AzureADUserAuthenticationMethod {
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'securityQuestion')]
 		[string]
-		$Answer
+		$Answer,
+
+		[Parameter(Mandatory = $True, ParameterSetName = 'temporaryAccessPass')]
+		[switch]
+		$TemporaryAccessPass,
+
+		[Parameter(Mandatory = $False,ParameterSetName = 'temporaryAccessPass')]
+		[int]$LifetimeInMinutes,
+
+		[Parameter(Mandatory = $False,ParameterSetName = 'temporaryAccessPass')]
+		[datetime]$StartDateTime,
+
+		[Parameter(Mandatory = $False,ParameterSetName = 'temporaryAccessPass')]
+		[boolean]$IsUsableOnce
 		
 	)
 	
@@ -98,7 +111,7 @@ function New-AzureADUserAuthenticationMethod {
 					phoneType = $PhoneType
 				}
 				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
-				Invoke-AzureAdRequest -Method POST -Query "users/$ObjectId/authentication/phoneMethods" -Body $json
+				Invoke-AzureAdRequest -Method POST -Query "users/$ObjectId/authentication/phoneMethods" -Body $json -Raw
 				break
 			}
 			"email" {
@@ -106,7 +119,20 @@ function New-AzureADUserAuthenticationMethod {
 					emailAddress = $EmailAddress
 				}
 				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
-				Invoke-AzureAdRequest -Method POST -Query "users/$ObjectId/authentication/emailMethods" -Body $json
+				Invoke-AzureAdRequest -Method POST -Query "users/$ObjectId/authentication/emailMethods" -Body $json -Raw
+				break
+			}
+			"temporaryAccessPass" {
+				$postParams = @{}
+				if ($True -eq $LifetimeInMinutes) {$postParams.LifetimeInMinutes = $LifetimeInMinutes}
+				if ($True -eq $StartDateTime) {
+					$startDateTimeUTC = $StartDateTime.ToUniversalTime()
+					$startDateTimeUTCISO = Get-Date $startDateTimeUTC
+					$postParams.StartDateTime = $startDateTimeUTCISO
+				}
+				if ($True -eq $IsUsableOnce) {$postParams.isUsableOnce = 'True'}
+				$json = $postparams | ConvertTo-Json -Depth 99 -Compress
+				Invoke-AzureAdRequest -Method POST -Query "users/$ObjectId/authentication/temporaryAccessPassMethods" -Body $json -Raw
 				break
 			}
 			default {

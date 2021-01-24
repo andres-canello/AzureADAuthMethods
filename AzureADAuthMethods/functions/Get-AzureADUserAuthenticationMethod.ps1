@@ -68,7 +68,10 @@ function Get-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $False, ParameterSetName = 'WindowsHelloForBusiness')]
 		[Parameter(Mandatory = $False, ParameterSetName = 'MicrosoftAuthenticator')]
 		[switch]
-		$ReturnDevices
+		$ReturnDevices,
+
+		[Parameter(Mandatory = $True,ParameterSetName = 'temporaryAccessPass')]
+		[switch]$TemporaryAccessPass
 		
 	)
 	begin {
@@ -95,6 +98,10 @@ function Get-AzureADUserAuthenticationMethod {
 			}
 			"FIDO2" {
 				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/fido2Methods"
+				break
+			}
+			"temporaryAccessPass" {
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/temporaryAccessPassMethods"
 				break
 			}
 			"MicrosoftAuthenticator" {
