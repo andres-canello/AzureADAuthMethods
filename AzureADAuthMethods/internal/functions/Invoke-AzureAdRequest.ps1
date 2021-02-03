@@ -61,7 +61,7 @@
 	}
 	process
 	{
-		try { $response = Invoke-RestMethod @parameters -ErrorAction Stop }
+		try { $response = Invoke-RestMethod @parameters -ErrorAction Continue }
 		catch { throw }
 		
 		
