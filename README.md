@@ -45,26 +45,26 @@ Additionally, to use the ReturnDevices parameter for Windows Hello for Business 
 
 ### Follow these steps to create a self signed certificate and associate it with your application.
 
-Your application ObjectId
+\# Your application ObjectId  
 $appObjectId = ""
 
 #### Create the self signed cert
-$currentDate = Get-Date
-$endDate = $currentDate.AddYears(1)
-$notAfter = $endDate.AddYears(1)
-$pwd = "ChooseAPassword"
-$thumb = (New-SelfSignedCertificate -CertStoreLocation cert:\currentuser\my -DnsName com.foo.bar -KeyExportPolicy Exportable -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter).Thumbprint
-$pwd = ConvertTo-SecureString -String $pwd -Force -AsPlainText
-Export-PfxCertificate -cert "cert:\currentuser\my\$thumb" -FilePath c:\temp\examplecert.pfx -Password $pwd
+$currentDate = Get-Date  
+$endDate = $currentDate.AddYears(1)  
+$notAfter = $endDate.AddYears(1)  
+$pwd = "ChooseAPassword"  
+$thumb = (New-SelfSignedCertificate -CertStoreLocation cert:\currentuser\my -DnsName com.foo.bar -KeyExportPolicy Exportable -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter).Thumbprint  
+$pwd = ConvertTo-SecureString -String $pwd -Force -AsPlainText  
+Export-PfxCertificate -cert "cert:\currentuser\my\\$thumb" -FilePath c:\temp\examplecert.pfx -Password $pwd  
 
 #### Load the certificate
-$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate("C:\temp\examplecert.pfx", $pwd)
-$keyValue = [System.Convert]::ToBase64String($cert.GetRawCertData())
-#Connect-AzureAD
+$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate("C:\temp\examplecert.pfx", $pwd)  
+$keyValue = [System.Convert]::ToBase64String($cert.GetRawCertData())  
+\#Connect-AzureAD  
 
 #### Add the cert credential to your application
-New-AzureADApplicationKeyCredential -ObjectId $appObjectId -CustomKeyIdentifier "Test123" -StartDate $currentDate -EndDate $endDate -Type AsymmetricX509Cert -Usage Verify -Value $keyValue
-Write-Host "Take note of this certificate thumbprint: $thumb"
+New-AzureADApplicationKeyCredential -ObjectId $appObjectId -CustomKeyIdentifier "Test123" -StartDate $currentDate -EndDate $endDate -Type AsymmetricX509Cert -Usage Verify -Value $keyValue  
+Write-Host "Take note of this certificate thumbprint: $thumb"  
 
 Remember to take note of the certificate thumbprint.
 
