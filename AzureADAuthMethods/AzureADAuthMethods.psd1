@@ -3,7 +3,7 @@
 	RootModule = 'AzureADAuthMethods.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.2.0'
+	ModuleVersion = '1.2.1'
 	
 	# ID used to uniquely identify this module
 	GUID = '9632077d-365e-4604-9ab4-589163308f2e'

@@ -71,7 +71,10 @@ function Get-AzureADUserAuthenticationMethod {
 		$ReturnDevices,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'temporaryAccessPass')]
-		[switch]$TemporaryAccessPass
+		[switch]$TemporaryAccessPass,
+
+		[Parameter(Mandatory = $True,ParameterSetName = 'PolicyEvaluation')]
+		[switch]$PolicyEvaluation
 		
 	)
 	begin {
@@ -84,6 +87,10 @@ function Get-AzureADUserAuthenticationMethod {
 	}
 	process {
 		$values = switch ($PSCmdlet.ParameterSetName) {
+			"PolicyEvaluation" {
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/policy"
+				break
+			}			
 			"phone" {
 				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/phoneMethods"
 				break

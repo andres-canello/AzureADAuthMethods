@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## 1.2.1 (2021-03-10)
+- Added support for policy evaluation. Get-AzureADUserAuthenticationMethod user@contoso.com -PolicyEvaluation
+
+## 1.2.0 (sometime ago)
+- Added support for Temporary Access Pass
+
 ## 1.1.1 (2021-01-19)
 
 - Removed support for deprecated passwordless phone sign in method
