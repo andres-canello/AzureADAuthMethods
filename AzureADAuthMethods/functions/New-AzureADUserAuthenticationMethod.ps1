@@ -11,14 +11,7 @@ function New-AzureADUserAuthenticationMethod {
 	#>
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory = $True, ParameterSetName = 'pin')]
-		[switch]
-		$Pin,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[switch]
-		$Oath,
-		
+
 		[Parameter(Mandatory = $True, ParameterSetName = 'password')]
 		[switch]
 		$Password,
@@ -35,30 +28,6 @@ function New-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
 		$ObjectId,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'pin', Position = 2)]
-		[string]
-		$NewPin,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[string]
-		$SecretKey,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[int]
-		$TimeIntervalInSeconds,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[string]
-		$SerialNumber,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[string]
-		$Manufacturer,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[string]
-		$Model,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'phone')]
 		[string]

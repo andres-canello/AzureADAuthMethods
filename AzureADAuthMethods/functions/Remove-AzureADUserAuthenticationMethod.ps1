@@ -11,9 +11,6 @@ function Remove-AzureADUserAuthenticationMethod {
 	#>
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory = $True, ParameterSetName = 'pin')]
-		[switch]
-		$Pin,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
 		[switch]
@@ -58,10 +55,6 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
 		$ObjectId,
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[string]
-		$SerialNumber,
 		
 		[Parameter(Mandatory = $True, ParameterSetName = 'phone')]
 		[ValidateSet("mobile", "alternateMobile", "office")]
@@ -109,6 +102,10 @@ function Remove-AzureADUserAuthenticationMethod {
 			}
 			"temporaryAccessPass" {
 				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/temporaryAccessPassMethods/$MethodId"
+				break
+			}
+			"softwareOath" {
+				Invoke-AzureAdRequest -Method DELETE -Query "users/$ObjectId/authentication/softwareOathMethods/$MethodId"
 				break
 			}
 			default {

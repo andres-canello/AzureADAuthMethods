@@ -20,10 +20,7 @@ function Get-AzureADUserAuthenticationMethod {
 	#>
 	[CmdletBinding(DefaultParameterSetName = 'allMethods')]
 	param (
-		[Parameter(Mandatory = $True, ParameterSetName = 'pin')]
-		[switch]
-		$Pin,
-		
+
 		[Parameter(Mandatory = $True, ParameterSetName = 'softwareOath')]
 		[switch]
 		$SoftwareOath,
@@ -93,6 +90,10 @@ function Get-AzureADUserAuthenticationMethod {
 			}			
 			"phone" {
 				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/phoneMethods"
+				break
+			}
+			"softwareOath" {
+				Invoke-AzureAdRequest @common -Query "users/$ObjectId/authentication/softwareOathMethods"
 				break
 			}
 			"email" {
