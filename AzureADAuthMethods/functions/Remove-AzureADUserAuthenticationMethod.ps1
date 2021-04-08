@@ -11,11 +11,7 @@ function Remove-AzureADUserAuthenticationMethod {
 	#>
 	[CmdletBinding()]
 	param (
-		
-		[Parameter(Mandatory = $True, ParameterSetName = 'oath')]
-		[switch]
-		$Oath,
-		
+			
 		[Parameter(Mandatory = $True, ParameterSetName = 'phone')]
 		[switch]
 		$Phone,
@@ -44,6 +40,7 @@ function Remove-AzureADUserAuthenticationMethod {
 		[Parameter(Mandatory = $True, ParameterSetName = 'MicrosoftAuthenticator')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'WindowsHelloForBusiness')]
 		[Parameter(Mandatory = $True, ParameterSetName = 'temporaryAccessPass')]
+		[Parameter(Mandatory = $True, ParameterSetName = 'softwareOath')]
 		[string]
 		$MethodId,
 		
@@ -66,7 +63,10 @@ function Remove-AzureADUserAuthenticationMethod {
 		$Question,
 
 		[Parameter(Mandatory = $True,ParameterSetName = 'temporaryAccessPass')]
-		[switch]$TemporaryAccessPass
+		[switch]$TemporaryAccessPass,
+
+		[Parameter(Mandatory = $True,ParameterSetName = 'softwareOath')]
+		[switch]$SoftwareOath
 		
 	)
 	
