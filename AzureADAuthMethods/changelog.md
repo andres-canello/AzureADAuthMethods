@@ -1,4 +1,6 @@
 ﻿# Changelog
+## 1.2.2 (2021-04-09)
+- Added support for softwareOathMethods
 
 ## 1.2.1 (2021-03-10)
 - Added support for policy evaluation. Get-AzureADUserAuthenticationMethod user@contoso.com -PolicyEvaluation
